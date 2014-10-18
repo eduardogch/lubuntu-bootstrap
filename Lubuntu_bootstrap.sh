@@ -102,17 +102,14 @@ Change the value to 0
 
 
 ###  Config Cron ### 
-export EDITOR=nano
 crontab -e
 # Added this lines at the bottom
+@reboot /usr/local/bin/flexget execute --cron
 @hourly /usr/local/bin/flexget execute --cron
-@hourly root apt-get update && apt-get -y upgrade
-@hourly root apt-get -f install && apt-get -y autoremove && apt-get -y autoclean && apt-get -y clean
 
-
-###  Install Dropbox ### 
-# Download .deb from https://www.dropbox.com/install?os=lnx
-sudo gdebi dropbox_1.6.2_amd64.deb
+sudo crontab -e
+0 */03 * * * root (apt-get update && apt-get -y -d upgrade) > /dev/null
+0 */03 * * * root (apt-get -f install && apt-get -y autoremove && apt-get -y autoclean && apt-get -y clean) > /dev/null
 
 
 ###  Install Google Chrome ###
