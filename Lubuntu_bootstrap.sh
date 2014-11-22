@@ -138,6 +138,11 @@ http://gitlab.pozole.noip.me
 sudo gitlab-ctl reconfigure
 sudo gitlab-ctl status
 
+###  Install Webmin ###
+sudo nano /etc/apt/sources.list
+deb http://download.webmin.com/download/repository sarge contrib
+wget -q http://www.webmin.com/jcameron-key.asc -O- | sudo apt-key add -
+sudo apt-get -y update && sudo apt-get -y install webmin
 
 ###  Config Transmission ###
 sudo service transmission-daemon stop
