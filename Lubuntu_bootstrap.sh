@@ -125,24 +125,18 @@ sudo apt-get update
 sudo apt-get install jenkins
 #Change port
 http://blog.htxiong.com/2013/06/install-jenkins-on-ubuntu-and-setting.html
+#Setting up Jenkins
+https://www.digitalocean.com/community/tutorials/how-to-install-and-use-jenkins-on-ubuntu-12-04
+#Jenkins and Gmail to have notifications
+http://stackoverflow.com/a/22267242
 
-
-###  Install GitLab ###
-sudo apt-get install -y postfix openssh-server
-wget https://downloads-packages.s3.amazonaws.com/ubuntu-14.04/gitlab_7.1.1-omnibus-1_amd64.deb
-sudo dpkg -i gitlab_7.1.1-omnibus-1_amd64.deb
-
-sudo nano /etc/gitlab/gitlab.rb
-http://gitlab.pozole.noip.me
-
-sudo gitlab-ctl reconfigure
-sudo gitlab-ctl status
 
 ###  Install Webmin ###
 sudo nano /etc/apt/sources.list
 deb http://download.webmin.com/download/repository sarge contrib
 wget -q http://www.webmin.com/jcameron-key.asc -O- | sudo apt-key add -
 sudo apt-get -y update && sudo apt-get -y install webmin
+
 
 ###  Config Transmission ###
 sudo service transmission-daemon stop
@@ -230,9 +224,10 @@ sudo nano /home/pozole/.flexget/config.yml
 
 # Contenido Archivo
 
-tasks:
-  tv tasks:
-    rss: http://www.torrentday.com/torrents/rss?download;l2;u=1323865;tp=3254b0e8fd13cc01a47daf9a0a66784b
+templates:
+  tv:
+    download: /home/pozole/Downloads/Torrents/
+    exists_series: /home/pozole/Downloads/Torrents/
     series:
       - the soup
       - wheeler dealers
@@ -245,11 +240,11 @@ tasks:
       - two and a half men
       - game of thrones
       - the simpsons
+      - storage hunters
       - storage wars
       - shipping wars
       - click
       - gadget show
-      - pawn stars
       - mythbusters
       - regular show
       - extreme weight loss
@@ -264,7 +259,25 @@ tasks:
       - counting cars
       - ninja warrior
       - jobs that dont suck
-    download: /home/pozole/Downloads/Torrents/
+      - shark tank
+      - american greed
+      - money talks
+      - border security
+      - the profit
+      - bar rescue
+
+tasks:
+  feed tv480p:
+    rss: http://www.torrentday.com/torrents/rss?download;l24;u=1323865;tp=3254b0e8fd13cc01a47daf9a0a66784b
+    template: tv
+
+  feed tv264:
+    rss: http://www.torrentday.com/torrents/rss?download;l7;u=1323865;tp=3254b0e8fd13cc01a47daf9a0a66784b
+    template: tv
+
+  feed tvxvid:
+    rss: http://www.torrentday.com/torrents/rss?download;l2;u=1323865;tp=3254b0e8fd13cc01a47daf9a0a66784b
+    template: tv
 
 sudo chmod -R 777 /home/pozole/.flexget
 flexget execute
