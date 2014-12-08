@@ -14,6 +14,7 @@ sudo apt-get -y upgrade
 sudo add-apt-repository -y ppa:transmissionbt/ppa
 sudo add-apt-repository -y ppa:team-xbmc/ppa
 sudo add-apt-repository -y ppa:webupd8team/popcorntime
+sudo add-apt-repository -y ppa:tualatrix/ppa
 sudo apt-get -y update 
 
 
@@ -21,54 +22,11 @@ sudo apt-get -y update
 
 sudo apt-get install -y unace unrar zip unzip p7zip-full p7zip-rar sharutils rar uudeview mpack arj cabextract file-roller
 
-sudo apt-get install -y gksu synaptic pavucontrol linux-firmware-nonfree pepperflashplugin-nonfree lubuntu-restricted-extras pithos build-essential transmission-daemon transmission-common transmission-cli
-
-sudo apt-get install -y samba samba-common system-config-samba python-glade2 ssh x11vnc
+sudo apt-get install -y ubuntu-tweak gksu synaptic pavucontrol linux-firmware-nonfree pepperflashplugin-nonfree lubuntu-restricted-extras build-essential transmission-daemon transmission-common transmission-cli ssh proftpd
 
 sudo apt-get install -y python-software-properties python-pip pkg-config software-properties-common xbmc popcorn-time
 
-sudo apt-get -y install lm-sensors hddtemp psensor thermald
-sudo dpkg-reconfigure hddtemp
-sudo sensors-detect
-sudo service kmod start
-
-
 # *|*|*|*|*|*|*|*|*|*| Config or install apps *|*|*|*|*|*|*|*|*|*|* # 
-
-### Config VNC ### 
-sudo ufw disable
-sudo ufw status
-sudo x11vnc -storepasswd /etc/x11vnc.pass
-
-sudo nano  /etc/init/x11vnc.conf
-start on login-session-start
-script
-/usr/bin/x11vnc -xkb -auth /var/run/lightdm/root/:0 -noxrecord -noxfixes -noxdamage -rfbauth /etc/x11vnc.pass -forever -bg -rfbport 5900 -o /var/log/x11vnc.log
-end script
-
-sudo nano /etc/lxdm/default.conf
-xauth_path=/tmp
-
-sudo nano /etc/lxdm/LoginReady
-#!/bin/sh
-/usr/bin/x11vnc -xkb -auth /tmp/.Xauth1000 -noxrecord -noxfixes -noxdamage -rfbauth /etc/x11vnc.pass -forever -bg -rfbport 5900 -o /var/log/x11vnc.log
-
-
-###  Config Samba ### 
-sudo nano /etc/samba/smb.conf
-#add this to the very end of the file:
-
-[pozole]
-path = /home/pozole
-available = yes
-valid users = pozole
-read only = no
-browseable = yes
-public = yes
-writable = yes
-comment = Rico Pozole
-
-sudo restart smbd
 
 ###  Install No-IP ### 
 wget http://www.no-ip.com/client/linux/noip-duc-linux.tar.gz
@@ -79,6 +37,12 @@ sudo make install
 sudo noip2 -S
 ps aux | grep noip2
 
+# Install Teamviewer
+sudo dpkg --add-architecture i386
+sudo apt-get -y update
+wget http://www.teamviewer.com/download/teamviewer_linux.deb
+sudo dpkg -i teamviewer_linux.deb
+sudo apt-get -y install -f
 
 ### Install Flirc ### 
 sudo nano /etc/apt/sources.list
@@ -88,55 +52,21 @@ deb http://apt.flirc.tv/arch/x64 binary/
 sudo apt-get -y update 
 sudo apt-get -y install flirc 
 
-
 ### Config rc.local ### 
 sudo nano /etc/rc.local
 
 /usr/local/bin/noip2
 xset s off && xset -dpms
 
-
 ###  Disable Errors ### 
 sudo nano /etc/default/apport
 Change the value to 0
-
 
 ###  Config Cron ### 
 crontab -e
 # Added this lines at the bottom
 @reboot /usr/local/bin/flexget execute --cron
 @hourly /usr/local/bin/flexget execute --cron
-
-sudo crontab -e
-0 */03 * * * root (apt-get update && apt-get -y -d upgrade) > /dev/null
-0 */03 * * * root (apt-get -f install && apt-get -y autoremove && apt-get -y autoclean && apt-get -y clean) > /dev/null
-
-
-###  Install Google Chrome ###
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-sudo dpkg -i google-chrome-stable_current_amd64.deb
-rm -f google-chrome-stable_current_amd64.deb
-
-
-###  Install Jenkins ###
-wget -q -O - https://jenkins-ci.org/debian/jenkins-ci.org.key | sudo apt-key add -
-sudo sh -c 'echo deb http://pkg.jenkins-ci.org/debian binary/ > /etc/apt/sources.list.d/jenkins.list'
-sudo apt-get update
-sudo apt-get install jenkins
-#Change port
-http://blog.htxiong.com/2013/06/install-jenkins-on-ubuntu-and-setting.html
-#Setting up Jenkins
-https://www.digitalocean.com/community/tutorials/how-to-install-and-use-jenkins-on-ubuntu-12-04
-#Jenkins and Gmail to have notifications
-http://stackoverflow.com/a/22267242
-
-
-###  Install Webmin ###
-sudo nano /etc/apt/sources.list
-deb http://download.webmin.com/download/repository sarge contrib
-wget -q http://www.webmin.com/jcameron-key.asc -O- | sudo apt-key add -
-sudo apt-get -y update && sudo apt-get -y install webmin
-
 
 ###  Config Transmission ###
 sudo service transmission-daemon stop
@@ -233,7 +163,6 @@ templates:
       - wheeler dealers
       - wipeout
       - gold rush
-      - hells kitchen
       - kitchen nightmares
       - south park
       - the big bang theory
@@ -248,21 +177,14 @@ templates:
       - mythbusters
       - regular show
       - extreme weight loss
-      - masterchef
       - cosmos
       - family guy
       - silicon valley
       - how its made
-      - heavy metal monsters
       - undercover boss
       - the amazing race
-      - counting cars
       - ninja warrior
-      - jobs that dont suck
       - shark tank
-      - american greed
-      - money talks
-      - border security
       - the profit
       - bar rescue
 
@@ -271,8 +193,8 @@ tasks:
     rss: http://www.torrentday.com/torrents/rss?download;l24;u=1323865;tp=3254b0e8fd13cc01a47daf9a0a66784b
     template: tv
 
-  feed tv264:
-    rss: http://www.torrentday.com/torrents/rss?download;l7;u=1323865;tp=3254b0e8fd13cc01a47daf9a0a66784b
+  feed tvsdx264:
+    rss: http://www.torrentday.com/torrents/rss?download;l26;u=1323865;tp=3254b0e8fd13cc01a47daf9a0a66784b
     template: tv
 
   feed tvxvid:
@@ -301,12 +223,38 @@ EndSection
 #Go to menu in LXDE session and in startup programs add
 #/usr/bin/xbmc
 
-###  Config Samba with GUI ###
-#Go to samba and add a user
-
 
 # *|*|*|*|*|*|*|*|*|*| Clean up this mess *|*|*|*|*|*|*|*|*|*|* #
 sudo apt-get -f install
 sudo apt-get autoremove
 sudo apt-get -y autoclean
 sudo apt-get -y clean
+
+
+
+# *|*|*|*|*|*|*|*|*|*| Optional *|*|*|*|*|*|*|*|*|*|* #
+###  Extras and Development ###
+
+###  Install Google Chrome ###
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo dpkg -i google-chrome-stable_current_amd64.deb
+rm -f google-chrome-stable_current_amd64.deb
+
+
+###  Install Jenkins ###
+wget -q -O - https://jenkins-ci.org/debian/jenkins-ci.org.key | sudo apt-key add -
+sudo sh -c 'echo deb http://pkg.jenkins-ci.org/debian binary/ > /etc/apt/sources.list.d/jenkins.list'
+sudo apt-get -y update && sudo apt-get -y install jenkins
+#Change port
+http://blog.htxiong.com/2013/06/install-jenkins-on-ubuntu-and-setting.html
+#Setting up Jenkins
+https://www.digitalocean.com/community/tutorials/how-to-install-and-use-jenkins-on-ubuntu-12-04
+#Jenkins and Gmail to have notifications
+http://stackoverflow.com/a/22267242
+
+
+###  Install Webmin ###
+sudo nano /etc/apt/sources.list
+deb http://download.webmin.com/download/repository sarge contrib
+wget -q http://www.webmin.com/jcameron-key.asc -O- | sudo apt-key add -
+sudo apt-get -y update && sudo apt-get -y install webmin
